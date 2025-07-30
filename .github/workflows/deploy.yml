@@ -1,0 +1,49 @@
+name: Deploy Angular Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Куда деплоить?'
+        required: true
+        default: 'github-pages'
+        type: choice
+        options:
+          - github-pages
+          - custom-server
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      build-folder: ${{ steps.build.outputs.build-folder }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app
+        id: build
+        run: |
+          BASE_HREF="/${GITHUB_REPOSITORY#*/}/"
+          echo "BASE_HREF=${BASE_HREF}"
+          npm run build -- --base-href $BASE_HREF
+          echo "build-folder=dist/angular-example-app" >> $GITHUB_OUTPUT
+
+  deploy-github-pages:
+    needs: build
+    if: ${{ github.event.inputs.target == 'github-pages' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ needs.build.outputs.build-folder }}
