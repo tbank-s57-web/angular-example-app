@@ -35,7 +35,7 @@ jobs:
           BASE_HREF="/${GITHUB_REPOSITORY#*/}/"
           echo "BASE_HREF=${BASE_HREF}"
           npm run build -- --base-href $BASE_HREF
-          echo "build-folder=dist/angular-example-app" >> $GITHUB_OUTPUT
+          echo "build-folder=dist/browser" >> $GITHUB_OUTPUT
 
   deploy-github-pages:
     needs: build
