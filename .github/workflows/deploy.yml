@@ -35,7 +35,10 @@ jobs:
           BASE_HREF="/${GITHUB_REPOSITORY#*/}/"
           echo "BASE_HREF=${BASE_HREF}"
           npm run build -- --base-href $BASE_HREF --configuration production
-          echo "build-folder=dist/browser" >> $GITHUB_OUTPUT
+          echo "build-folder=dist/browser" >> "$GITHUB_OUTPUT"
+
+      - name: Debug output
+        run: echo "Build folder is ${{ steps.build.outputs.build-folder }}"
 
   deploy-github-pages:
     needs: build
