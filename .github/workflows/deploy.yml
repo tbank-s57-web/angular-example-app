@@ -34,7 +34,7 @@ jobs:
         run: |
           BASE_HREF="/${GITHUB_REPOSITORY#*/}/"
           echo "BASE_HREF=${BASE_HREF}"
-          npm run build -- --base-href $BASE_HREF
+          npm run build -- --base-href $BASE_HREF --configuration production
           echo "build-folder=dist/browser" >> $GITHUB_OUTPUT
 
   deploy-github-pages:
